@@ -41,27 +41,39 @@ function warpComponent(Foo){
 const WappedComponent1 = warpComponent(Component1);
 const WappedComponent2 = warpComponent(Component2);
 
-function increment(){
+function increment(payload){
   return {
     type: 'INCREMENT',
+    payload,
   }
 }
 
-function decrement(){
+function decrement(payload){
   return {
     type: 'DECREMENT',
+    payload,
   }
 }
 
 class App extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      inputValue: 0,
+    };
+    this.onChange = this.onChange.bind(this);
+  }
+
+  onChange(evt){
+    this.setState({ inputValue: evt.target.value });
+  }
 
   render() {
     return (
       <div>
-        <Counter onIncrement={this.props.onIncrement} onDecrement={this.props.onDecrement}/>
+        <Counter onIncrement={() => this.props.onIncrement(this.state.inputValue)} onDecrement={() => this.props.onDecrement(this.state.inputValue)}/>
         <Result counter={this.props.counter}/>
-        <WappedComponent1 index="2"/>
-        <WappedComponent2 index="10"/>
+        <input type="number" value={this.state.inputValue} onChange={this.onChange}/>
       </div>
     );
   }
@@ -75,8 +87,8 @@ const mapStateToProps = (store) => {
 
 const mapDispatcherToProps = (dispatch) => {
   return {
-    onIncrement: () => dispatch(increment()),
-    onDecrement: () => dispatch(decrement()),
+    onIncrement: (value) => dispatch(increment(value)),
+    onDecrement: (value) => dispatch(decrement(value)),
   }
 }
 
