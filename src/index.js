@@ -6,9 +6,9 @@ import {Provider} from 'react-redux';
 import registerServiceWorker from './registerServiceWorker';
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 
-const state = {
+const storeState = {
   counter: 0,
-  logs: [],
+  input: 0,
 };
 
 const middlewares = [
@@ -31,12 +31,18 @@ const composeEnhancers =
 
 const countReducer = (state = 0, action) => {
   switch(action.type){
-    case 'INCREMENT': return state + 1;
-    case 'DECREMENT': return state - 1;
+    case 'INCREMENT': return state + parseFloat(action.payload); // => storeState.counter
+    case 'DECREMENT': return state - parseFloat(action.payload);
     default: return state;
   }
 };
-
+// action: action = {type: CHANGE, payload: 10}
+const inputReducer = (state = 0, action) => {
+  switch(action.type){
+    case 'CHANGE': return action.payload;
+    default: return state;
+  }
+};
 
 // const logsReducer = (state = 0, action) => {
 //   switch(action.type){
@@ -48,11 +54,12 @@ const countReducer = (state = 0, action) => {
 
 const rootReducer = combineReducers({
   counter: countReducer,
+  input: inputReducer,
 });
 
 const store = createStore(
   rootReducer,
-  {},
+  storeState,
   composeEnhancers(...enhancers)
 );
 // const store = createStore(rootReducer);

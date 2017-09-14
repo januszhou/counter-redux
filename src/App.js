@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Counter from './components/Counter';
 import Result from './components/Result';
 import { connect } from 'react-redux';
+import InputField from './InputField';
 
 class Component1 extends Component {
   componentDidMount(){
@@ -41,15 +42,17 @@ function warpComponent(Foo){
 const WappedComponent1 = warpComponent(Component1);
 const WappedComponent2 = warpComponent(Component2);
 
-function increment(){
+function increment(payload){
   return {
     type: 'INCREMENT',
+    payload,
   }
 }
 
-function decrement(){
+function decrement(payload){
   return {
     type: 'DECREMENT',
+    payload,
   }
 }
 
@@ -58,26 +61,28 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Counter onIncrement={this.props.onIncrement} onDecrement={this.props.onDecrement}/>
+        <Counter onIncrement={() => this.props.onIncrement(this.props.input)} onDecrement={() => this.props.onDecrement(this.props.input)}/>
         <Result counter={this.props.counter}/>
         <WappedComponent1 index="2"/>
         <WappedComponent2 index="10"/>
+        <InputField />
       </div>
     );
   }
 }
 
-const mapStateToProps = (store) => {
+const mapStoreToProps = (store) => {
   return {
+    input: store.input,
     counter: store.counter,
   }
 }
 
 const mapDispatcherToProps = (dispatch) => {
   return {
-    onIncrement: () => dispatch(increment()),
-    onDecrement: () => dispatch(decrement()),
+    onIncrement: (payload) => dispatch(increment(payload)),
+    onDecrement: (payload) => dispatch(decrement(payload)),
   }
 }
 
-export default connect(mapStateToProps, mapDispatcherToProps)(App);
+export default connect(mapStoreToProps, mapDispatcherToProps)(App);
